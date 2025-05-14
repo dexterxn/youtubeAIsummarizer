@@ -61,7 +61,7 @@ GROQ_API_KEY=your_api_key_here
 ### A. Start the Node.js summarization server
 
 ```bash
-npx nodemon server.js
+nodemon server.js
 ```
 
 ### B. Start the Python transcript service

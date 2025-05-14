@@ -8,7 +8,7 @@ This guide will walk you through how to get your YouTube AI Summarizer project u
 
 ### A. Clone and Unzip
 
-1. Clone this repository or download the ZIP file:
+1. Clone this repository:
    ```
    git clone https://github.com/dexterxn/Chrome-Extension-Base-Template.git
    ```

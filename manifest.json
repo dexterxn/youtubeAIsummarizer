@@ -1,12 +1,16 @@
 {
   "manifest_version": 2,
-  "name": "Your Chrome Extension Name",
-  "version": "0.1",
-  "author": "First Last",
-  "description": "A description about your Chrome Extension...",
+  "name": "Youtube AI summarizer",
+  "version": "1.0",
+  "author": "Dexter Zhang",
+  "description": "paste link here and it will return a summary",
   "permissions": [
     ""
   ],
+  "host_permissions": [
+    "http://localhost:3000/*"
+  ],
+
   "content_scripts": [
     {
       "matches": [
@@ -25,6 +29,6 @@
   "browser_action": {
     "default_icon": "logo.png",
     "default_popup": "index.html",
-    "default_title": "A tooltip popup description when you hover over the Chrome Extension icon."
+    "default_title": "AI youtube summarizer"
   }
 }

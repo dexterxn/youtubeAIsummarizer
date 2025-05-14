@@ -8,7 +8,7 @@ export async function main(vidTranscript) {
 }
 
 export async function getGroqChatCompletion(vidTranscript) {
-  console.log("vid Tanscript:", vidTranscript)
+  console.log(vidTranscript);
   return groq.chat.completions.create({
     messages: [
       {
@@ -16,6 +16,6 @@ export async function getGroqChatCompletion(vidTranscript) {
         content: `${vidTranscript} summarize it pls`,
       },
     ],
-    model: "gemma2-9b-it",
+    model: "llama-3.3-70b-versatile",
   });
 }

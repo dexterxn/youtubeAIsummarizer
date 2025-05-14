@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       // Step 1: Fetch transcript from Python API
-      console.log("link: ", link);
       const transcriptRes = await fetch('http://localhost:5000/transcript', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -28,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const summaryRes = await fetch('http://localhost:3000/api/summarize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: transcriptData.transcript }) // <- using transcript, not URL
+        body: JSON.stringify({ transcript: transcriptData.transcript }) // <- using transcript, not URL
       });
 
       const summaryData = await summaryRes.json();

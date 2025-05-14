@@ -23,6 +23,13 @@ First Last
 - IDE or Text Editor of Your Choice
 
 ## Setup Instructions
+1. install dependencies 
+2. create API key for groq
+3. nodemon .\server.js
+4. python transcript_api.py
+5. 
+
+
 ### For Developers
 1. Make a clone of this project, unzipped.
 2. Open Chrome Browser

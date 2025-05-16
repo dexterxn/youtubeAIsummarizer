@@ -1,42 +1,64 @@
+/* Use a rounder font */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+
 body {
-      font-family: Arial, sans-serif;
-      max-width: 1000px;
-      margin: 40px auto;
-      padding: 30px;
-      background-color: #f8f9fa;
-    }
+  font-family: 'Nunito', Arial, sans-serif;
+  width: 400px; /* Set popup width */
+  height: 420px; /* Increased popup height for more summary space */
+  margin: 0 auto;
+  padding: 20px; /* Slightly reduced padding for more usable space */
+  background-color: #f8f9fa;
+  box-sizing: border-box;
+}
 
-    h1 {
-      text-align: center;
-    }
+/* Make the main heading stand out, but smaller */
+h1 {
+  text-align: center;
+  font-size: 1.2em; /* Smaller font size */
+  margin-bottom: 10px; /* Reduced margin */
+}
 
-    input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      font-size: 16px;
-    }
+/* Input styling - condensed */
+input[type="text"] {
+  width: 100%;
+  padding: 6px;        /* Reduced padding */
+  margin-bottom: 6px;  /* Reduced margin */
+  font-size: 15px;     /* Slightly smaller font size */
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
 
-    button {
-      width: 100%;
-      padding: 10px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-    }
+/* Button styling - condensed */
+button {
+  width: 100%;
+  padding: 8px;        /* Reduced padding */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  font-size: 15px;     /* Slightly smaller font size */
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 8px;  /* Small margin below for spacing */
+}
 
-    button:hover {
-      background-color: #0056b3;
-    }
+button:hover {
+  background-color: #0056b3;
+}
 
-    #summary-box {
-      margin-top: 20px;
-      padding: 10px;
-      height: 300px;
-      overflow-y: scroll;
-      background-color: #ffffff;
-      border: 1px solid #ccc;
-      white-space: pre-wrap;
-    }
+/* Summary box takes up more space and uses larger font */
+#summary-box {
+  margin-top: 10px;
+  margin-bottom: 16px;   /* Space below summary box */
+  padding: 14px;
+  height: 250px;         /* Increased height to fill more of the popup */
+  overflow-y: auto;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  font-size: 18px;       /* Large, readable font */
+  line-height: 1.6;
+  box-sizing: border-box;
+}

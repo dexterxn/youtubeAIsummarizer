@@ -8,7 +8,6 @@ export async function main(vidTranscript) {
 }
 
 export async function getGroqChatCompletion(vidTranscript) {
-  console.log(vidTranscript);
   return groq.chat.completions.create({
     messages: [
       {

@@ -10,25 +10,14 @@
   "host_permissions": [
     "http://localhost:3000/*"
   ],
-
-  "content_scripts": [
-    {
-      "matches": [
-        "<all_urls>"
-      ],
-      "js": [
-        "content.js"
-      ]
-    }
-  ],
   "background": {
     "scripts": [
-      "background.js"
+      "./frontend/scripts.js"
     ]
   },
   "browser_action": {
-    "default_icon": "logo.png",
-    "default_popup": "index.html",
+    "default_icon": "./frontend/assets/logov2.png",
+    "default_popup": "./frontend/index.html",
     "default_title": "AI youtube summarizer"
   }
 }

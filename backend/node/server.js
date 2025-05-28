@@ -1,10 +1,21 @@
 // server.js
 import express from 'express';
+import cors from 'cors';
 import bodyParser from 'body-parser';
 import { main } from './groq.js';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
+
+// Allow CORS for Chrome extensions
+app.use(cors({
+  origin: [
+    'chrome-extension://iahjhgmaapcelagfaeoigialomhdeamo',
+    'http://localhost:3000'
+  ],
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
 
 app.use(bodyParser.json());
 app.use(express.static('.'));

@@ -11,8 +11,10 @@
 
   <h1>AI YouTube Summarizer</h1>
   <input type="text" id="youtube-link" placeholder="Enter YouTube video URL" />
-  <button onclick="submitLink()">Summarize</button>
-
+  <button id="summarize-btn" onclick="submitLink()">Summarize</button>
+  
+  <button id="copy-btn" onclick="copySummary()">Copy Summary</button>
+  <div id="toast" class="hidden">Copied to clipboard!</div>
   <div id="summary-box">Summary will appear here...</div>
 
  <script src="scripts.js"></script>

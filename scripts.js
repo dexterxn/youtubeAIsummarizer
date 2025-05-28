@@ -1,9 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const button = document.querySelector('button');
+  const summarizeBtn = document.getElementById('summarize-btn');
+  const copyBtn = document.getElementById('copy-btn');
   const summaryBox = document.getElementById('summary-box');
   const input = document.getElementById('youtube-link');
 
-  button.addEventListener('click', async () => {
+  summarizeBtn.addEventListener('click', async () => {
     const link = input.value;
     summaryBox.textContent = "Processing transcript...";
 
@@ -27,15 +28,35 @@ document.addEventListener('DOMContentLoaded', () => {
       const summaryRes = await fetch('http://localhost:3000/api/summarize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ transcript: transcriptData.transcript }) // <- using transcript, not URL
+        body: JSON.stringify({ transcript: transcriptData.transcript })
       });
 
       const summaryData = await summaryRes.json();
       summaryBox.textContent = summaryData.summary || "No summary found.";
-
     } catch (err) {
       summaryBox.textContent = "Error occurred.";
       console.error(err);
     }
+  });
+  function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 2000); // 2 seconds
+  }
+
+  copyBtn.addEventListener('click', () => {
+    const text = summaryBox.textContent || summaryBox.innerText;
+    if (!text || text.trim() === "Summary will appear here...") {
+      showToast("There's no summary to copy!");
+      return;
+    }
+
+    navigator.clipboard.writeText(text)
+      .then(() => showToast("Summary copied to clipboard!"))
+      .catch(err => console.error("Failed to copy text: ", err));
   });
 });

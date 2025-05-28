@@ -62,3 +62,23 @@ button:hover {
   line-height: 1.6;
   box-sizing: border-box;
 }
+#toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.4s ease, bottom 0.4s ease;
+  z-index: 1000;
+}
+
+#toast.show {
+  opacity: 1;
+  bottom: 50px;
+}

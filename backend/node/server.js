@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import { main } from './groq.js';
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 8080;
 
 // Allow CORS for Chrome extensions
 app.use(cors({
@@ -16,7 +16,7 @@ app.use(cors({
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
-
+ 
 app.use(bodyParser.json());
 app.use(express.static('.'));
 

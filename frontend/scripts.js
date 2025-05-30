@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Step 2: Send transcript to summarization API
       summaryBox.textContent = "Summarizing...";
-      const summaryRes = await fetch('http://localhost:3000/api/summarize', {
+      const summaryRes = await fetch('https://groq-summarizer-730135335149.us-central1.run.app/api/summarize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ transcript: transcriptData.transcript })

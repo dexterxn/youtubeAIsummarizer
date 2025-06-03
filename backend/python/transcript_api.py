@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from youtube_transcript_api import YouTubeTranscriptApi
 from urllib.parse import urlparse, parse_qs
 from flask_cors import CORS
+import os
+
 
 app = Flask(__name__)
 CORS(app)  # Enable cross-origin requests for frontend use
@@ -30,4 +32,5 @@ def get_transcript():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(port=5000)
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)

@@ -87,7 +87,6 @@ python transcript_api.py
 
 5. The extension will now appear in your toolbar.  
    After making changes to the extension code, click **Reload** on the extension page to apply updates.
-
 ---
 
 ## 📄 License

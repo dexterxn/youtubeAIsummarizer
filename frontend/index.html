@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=300px, initial-scale=1.0"/>
+  <meta name="viewport" content="width=420px, initial-scale=1.0"/>
   <title>AI YouTube Summarizer</title>
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
@@ -10,10 +10,15 @@
 <body>
   <div class="container">
     <h1>AI YouTube Summarizer</h1>
-    <input type="text" id="youtube-link" placeholder="Enter YouTube video URL" />
-    <button id="summarize-btn">Summarize</button>
+    <div id="video-info" class="video-info">
+      <p id="video-title">Detecting current video...</p>
+    </div>
     
-    <button id="copy-btn">Copy Summary</button>
+    <div class="button-group">
+      <button id="summarize-btn">Summarize Current Video</button>
+      <button id="copy-btn">Copy Summary</button>
+    </div>
+    
     <div id="summary-box">Summary will appear here...</div>
   </div>
   

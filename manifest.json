@@ -3,7 +3,7 @@
   "name": "Youtube AI summarizer",
   "version": "1.0",
   "author": "Dexter Zhang",
-  "description": "paste link here and it will return a summary",
+  "description": "Automatically summarizes the YouTube video you're currently watching",
   "permissions": [
     "activeTab",
     "storage",

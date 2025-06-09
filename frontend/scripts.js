@@ -545,41 +545,41 @@ document.addEventListener('DOMContentLoaded', async () => {
       showToast("Transcript extracted successfully!");
       
       // Send transcript to summarization API
-    //   const summaryRes = await fetch('https://groq-summarizer-730135335149.us-central1.run.app/api/summarize', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ transcript: transcriptResult.fullText })
-    //   });
+      const summaryRes = await fetch('https://groq-summarizer-730135335149.us-central1.run.app/api/summarize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transcript: transcriptResult.fullText })
+      });
 
-    //   if (!summaryRes.ok) {
-    //     throw new Error(`Server error: ${summaryRes.status} ${summaryRes.statusText}`);
-    //   }
+      if (!summaryRes.ok) {
+        throw new Error(`Server error: ${summaryRes.status} ${summaryRes.statusText}`);
+      }
 
-    //   const summaryData = await summaryRes.json();
+      const summaryData = await summaryRes.json();
       
-    //   if (summaryData.summary) {
-    //     summaryBox.textContent = summaryData.summary;
-    //     showToast("Summary generated successfully!", "success");
-    //   } else if (summaryData.error) {
-    //     summaryBox.textContent = `Summary Error: ${summaryData.error}`;
-    //     showToast("Failed to generate summary", "error");
-    //   } else {
-    //     summaryBox.textContent = "No summary was generated. Please try again.";
-    //     showToast("No summary generated", "error");
-    //   }
-    // } catch (err) {
-    //   console.error('Summarization error:', err);
-    //   let errorMessage = "An error occurred while processing your request.";
+      if (summaryData.summary) {
+        summaryBox.textContent = summaryData.summary;
+        showToast("Summary generated successfully!", "success");
+      } else if (summaryData.error) {
+        summaryBox.textContent = `Summary Error: ${summaryData.error}`;
+        showToast("Failed to generate summary", "error");
+      } else {
+        summaryBox.textContent = "No summary was generated. Please try again.";
+        showToast("No summary generated", "error");
+      }
+    } catch (err) {
+      console.error('Summarization error:', err);
+      let errorMessage = "An error occurred while processing your request.";
       
-    //   if (err.message.includes('fetch')) {
-    //     errorMessage = "Network error: Unable to connect to the summarization service.";
-    //   } else if (err.message.includes('Server error')) {
-    //     errorMessage = `Server error: ${err.message}`;
-    //   }
+      if (err.message.includes('fetch')) {
+        errorMessage = "Network error: Unable to connect to the summarization service.";
+      } else if (err.message.includes('Server error')) {
+        errorMessage = `Server error: ${err.message}`;
+      }
       
-    //   summaryBox.textContent = `Error: ${errorMessage}`;
-      summaryBox.textContent = transcriptResult.fullText;
-      // showToast("Failed to generate summary", "error");
+      summaryBox.textContent = `Error: ${errorMessage}`;
+      // summaryBox.textContent = transcriptResult.fullText;
+      showToast("Failed to generate summary", "error");
     } finally {
       setLoadingState(false);
     }

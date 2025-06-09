@@ -12,7 +12,12 @@ export async function getGroqChatCompletion(vidTranscript) {
     messages: [
       {
         role: "user",
-        content: `${vidTranscript} summarize it pls`,
+        content: `Summarize the following YouTube video transcript in clear, 
+        fluent English. The summary should be no longer than three paragraphs and 
+        must capture the main points and key takeaways from the video. 
+        Do not include any extraneous details or commentary. If the transcript is 
+        not in English, translate and summarize it in English only.
+                  ${vidTranscript}`,
       },
     ],
     model: "llama-3.3-70b-versatile",

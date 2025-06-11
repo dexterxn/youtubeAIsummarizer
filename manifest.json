@@ -1,16 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "Youtube AI summarizer",
+  "name": "Youtube AI Summarizer",
   "version": "1.0",
   "author": "Dexter Zhang",
   "description": "Automatically summarizes the YouTube video you're currently watching",
   "permissions": [
     "activeTab",
-    "storage",
-    "offscreen",
     "scripting",
-    "tabs",
-    "cookies"
+    "tabs"
   ],
   "host_permissions": [
     "https://www.youtube.com/*",
@@ -18,12 +15,9 @@
     "https://m.youtube.com/*",
     "https://groq-summarizer-730135335149.us-central1.run.app/*"
   ],
-  "background": {
-    "service_worker": "background.js"
-  },
   "action": {
     "default_icon": "frontend/assets/logov2.png",
     "default_popup": "frontend/index.html",
-    "default_title": "AI youtube summarizer"
+    "default_title": "Youtube AI Summarizer"
   }
 }

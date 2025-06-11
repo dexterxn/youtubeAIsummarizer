@@ -13,7 +13,7 @@ A modern Chrome extension that extracts YouTube video transcripts and generates 
 
 ## 🚀 Enhanced Transcript Extraction
 
-1. **Video Page Extraction**: Extracts from YouTube's DOM data
+1. **Video Page Extraction**: DOM manipulation and web scraping
 
 
 ## 🛠️ Technical Improvements

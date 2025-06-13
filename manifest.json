@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Youtube AI Summarizer",
-  "version": "1.0",
+  "version": "1.1",
   "author": "Dexter Zhang",
   "description": "Automatically summarizes the YouTube video you're currently watching",
   "permissions": [

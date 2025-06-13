@@ -1,0 +1,25 @@
+.error-message {
+  color: #dc3545;
+  margin-bottom: 15px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.copy-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.copy-btn:hover {
+  background-color: #0056b3;
+}
+
+.copy-btn:active {
+  background-color: #004085;
+} 

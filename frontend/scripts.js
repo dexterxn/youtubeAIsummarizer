@@ -526,6 +526,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       const transcriptResult = await getTranscript(window.currentVideoInfo.videoId, window.currentVideoInfo.tabId);
       console.log("Transcript result:", transcriptResult);
+      console.log("Full transcript text:", transcriptResult.fullText);
 
       if (!transcriptResult.success) {
         summaryBox.textContent = `Error: ${transcriptResult.error}`;
@@ -542,6 +543,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
 
+      // Check transcript length (approximately 4 chars per token)
+      const estimatedTokens = Math.ceil(transcriptResult.fullText.length / 4);
+      if (estimatedTokens > 32000) { // Groq's context window limit
+        summaryBox.textContent = `Error: Transcript is too long (estimated ${estimatedTokens} tokens). Please try a shorter video.`;
+        showToast("Transcript too long to process", "error");
+        setLoadingState(false);
+        return;
+      }
+
       showToast("Transcript extracted successfully!");
       
       // Send transcript to summarization API
@@ -551,11 +561,86 @@ document.addEventListener('DOMContentLoaded', async () => {
         body: JSON.stringify({ transcript: transcriptResult.fullText })
       });
 
+      console.log('Server response status:', summaryRes.status);
+      const responseText = await summaryRes.text();
+      console.log('Server response:', responseText);
+
       if (!summaryRes.ok) {
-        throw new Error(`Server error: ${summaryRes.status} ${summaryRes.statusText}`);
+        let errorData;
+        try {
+          errorData = JSON.parse(responseText);
+          console.log('Server response status:', summaryRes.status);
+          console.log('Full error response:', responseText);
+          console.log('Parsed error data:', errorData);
+        } catch (e) {
+          console.error('Failed to parse error response:', e);
+          errorData = { error: responseText };
+        }
+
+        // Check for any token/transcript length related errors
+        const isTokenError = 
+          summaryRes.status === 429 || 
+          errorData.error?.message?.includes('Request too large') ||
+          errorData.error?.code === 'rate_limit_exceeded' ||
+          errorData.error?.type === 'tokens' ||
+          errorData.error?.message?.includes('tokens per minute') ||
+          errorData.error?.message?.includes('TPM');
+
+        if (isTokenError) {
+          const errorMessage = "This video is too long to summarize. Please try a shorter video (under 10 minutes).";
+          summaryBox.innerHTML = `
+            <div class="error-message">${errorMessage}</div>
+            <button id="copy-transcript" class="copy-btn">Copy Transcript to Clipboard</button>
+          `;
+          
+          // Add click handler for copy button
+          document.getElementById('copy-transcript').addEventListener('click', () => {
+            navigator.clipboard.writeText(transcriptResult.fullText)
+              .then(() => showToast("Transcript copied to clipboard!", "success"))
+              .catch(err => {
+                console.error("Failed to copy text: ", err);
+                showToast("Failed to copy transcript", "error");
+              });
+          });
+          
+          showToast("Video too long to process", "error");
+          setLoadingState(false);
+          return;
+        }
+
+        // For other errors, show user-friendly messages
+        let userMessage;
+        if (errorData.error?.message?.includes('network')) {
+          userMessage = "Unable to connect to the server. Please check your internet connection and try again.";
+        } else if (errorData.error?.message?.includes('timeout')) {
+          userMessage = "The request took too long to process. Please try again.";
+        } else if (errorData.error?.message?.includes('transcript')) {
+          userMessage = "Unable to get the video transcript. Please make sure the video has captions available.";
+        } else {
+          userMessage = "Unable to summarize the video. Please try again or try a different video.";
+        }
+
+        summaryBox.innerHTML = `
+          <div class="error-message">${userMessage}</div>
+          <button id="copy-transcript" class="copy-btn">Copy Transcript to Clipboard</button>
+        `;
+
+        // Add click handler for copy button
+        document.getElementById('copy-transcript').addEventListener('click', () => {
+          navigator.clipboard.writeText(transcriptResult.fullText)
+            .then(() => showToast("Transcript copied to clipboard!", "success"))
+            .catch(err => {
+              console.error("Failed to copy text: ", err);
+              showToast("Failed to copy transcript", "error");
+            });
+        });
+
+        showToast("Failed to process video", "error");
+        setLoadingState(false);
+        return;
       }
 
-      const summaryData = await summaryRes.json();
+      const summaryData = JSON.parse(responseText);
       
       if (summaryData.summary) {
         summaryBox.textContent = summaryData.summary;
@@ -573,12 +658,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       if (err.message.includes('fetch')) {
         errorMessage = "Network error: Unable to connect to the summarization service.";
-      } else if (err.message.includes('Server error')) {
-        errorMessage = `Server error: ${err.message}`;
+      } else if (err.message.includes('Rate limit exceeded')) {
+        errorMessage = err.message;
+      } else {
+        errorMessage = err.message;
       }
       
-      summaryBox.textContent = `Error: ${errorMessage}`;
-      // summaryBox.textContent = transcriptResult.fullText;
+      summaryBox.textContent = errorMessage;
       showToast("Failed to generate summary", "error");
     } finally {
       setLoadingState(false);

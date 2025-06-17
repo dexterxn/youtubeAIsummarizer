@@ -1,4 +1,5 @@
-# 🎥 YouTube AI Summarizer Chrome Extension **NOW LIVE**
+# 🎥 YouTube AI Summarizer Chrome Extension 
+***NOW LIVE***
 https://chromewebstore.google.com/detail/youtube-ai-summarizer/jacpidgdbbbdgeackjnehbijnaphbhaa?utm_source=item-share-cb 
 
 A modern Chrome extension that extracts YouTube video transcripts and generates AI-powered summaries using Groq backend. 

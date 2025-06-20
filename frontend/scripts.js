@@ -499,6 +499,22 @@ function updateVideoInfo(videoInfo) {
     summarizeBtn.disabled = true;
   }
 }
+// Function to pause YouTube video in the tab
+function pauseYouTubeVideo() {
+  // Pause the native <video> element (works for most YouTube pages)
+  const video = document.querySelector('video');
+  if (video && !video.paused) {
+    video.pause();
+  }
+  // Pause embedded YouTube iframe if present
+  const iframe = document.querySelector('iframe[src*="youtube.com/embed"], iframe[src*="youtube.com/watch"], iframe[src*="youtube.com/v/"]');
+  if (iframe) {
+    iframe.contentWindow.postMessage(
+      '{"event":"command","func":"pauseVideo","args":""}',
+      '*'
+    );
+  }
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
   const summarizeBtn = document.getElementById('summarize-btn');
@@ -514,6 +530,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Store current video info globally
   window.currentVideoInfo = videoInfo;
+
+  // Pause YouTube video in the tab 
+  if (videoInfo.success) {
+    await chrome.scripting.executeScript({
+      target: { tabId: videoInfo.tabId },
+      func: pauseYouTubeVideo
+    });
+  }
 
   summarizeBtn.addEventListener('click', async () => {
     if (!window.currentVideoInfo || !window.currentVideoInfo.success) {
@@ -645,6 +669,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (summaryData.summary) {
         summaryBox.textContent = summaryData.summary;
         showToast("Summary generated successfully!", "success");
+        await saveSummary(window.currentVideoInfo.videoId, summaryData.summary);
       } else if (summaryData.error) {
         summaryBox.textContent = `Summary Error: ${summaryData.error}`;
         showToast("Failed to generate summary", "error");
@@ -707,4 +732,179 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Refresh video info when extension popup is focused (optional)
   window.addEventListener('focus', refreshVideoInfo);
+
+  chrome.storage.local.get('lastSummary', (data) => {
+    if (data.lastSummary) {
+      summaryBox.textContent = data.lastSummary;
+    }
+  });
+
+  chrome.storage.local.get('summaries', (data) => {
+    if (data.summaries && data.summaries.length) {
+      // Render summaries in your popup, e.g. as a list
+      data.summaries.forEach(item => {
+        // create DOM elements for each summary
+      });
+    }
+  });
+
+  // History panel elements
+  const historyBtn = document.getElementById('history-btn');
+  const historyPanel = document.getElementById('history-panel');
+  const historyList = document.getElementById('history-list');
+  const backBtn = document.getElementById('back-btn');
+
+  // Toggle history panel
+  historyBtn.addEventListener('click', () => {
+    historyPanel.classList.toggle('hidden');
+    if (!historyPanel.classList.contains('hidden')) {
+      loadHistory();
+    }
+  });
+
+  // Back button handler
+  backBtn.addEventListener('click', () => {
+    historyPanel.classList.add('hidden');
+  });
+
+  // Confirmation dialog elements
+  const confirmDialog = document.getElementById('confirm-dialog');
+  const confirmDeleteBtn = document.getElementById('confirm-delete');
+  const cancelDeleteBtn = document.getElementById('cancel-delete');
+
+  // Function to show confirmation dialog and handle delete
+  function showDeleteConfirmation(historyItem, index) {
+    confirmDialog.classList.remove('hidden');
+    
+    // Store the current item being deleted
+    confirmDeleteBtn.onclick = async () => {
+      try {
+        const { summaries } = await chrome.storage.local.get('summaries');
+        // Remove the summary at this index
+        summaries.splice(index, 1);
+        await chrome.storage.local.set({ summaries });
+        
+        // Hide dialog
+        confirmDialog.classList.add('hidden');
+        
+        // Remove the item from UI with animation
+        historyItem.style.opacity = '0';
+        historyItem.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+          historyItem.remove();
+          // If no more summaries, show empty state
+          if (summaries.length === 0) {
+            loadHistory();
+          }
+        }, 200);
+        
+        showToast('Summary deleted', 'success');
+      } catch (error) {
+        console.error('Failed to delete summary:', error);
+        showToast('Failed to delete summary', 'error');
+        confirmDialog.classList.add('hidden');
+      }
+    };
+    
+    // Cancel button handler
+    cancelDeleteBtn.onclick = () => {
+      confirmDialog.classList.add('hidden');
+    };
+  }
+
+  // Update the history loading function
+  async function loadHistory() {
+    try {
+      const { summaries = [] } = await chrome.storage.local.get('summaries');
+      historyList.innerHTML = '';
+      
+      if (summaries.length === 0) {
+        historyList.innerHTML = `
+          <div class="history-item">
+            <p>No summaries yet. Start by summarizing a video!</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Sort by date, newest first
+      summaries.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      summaries.forEach((item, index) => {
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item';
+        historyItem.innerHTML = `
+          <button class="delete-btn" title="Delete Summary">
+            <i class="fas fa-times"></i>
+          </button>
+          <h3>${item.title || 'Unknown Video'}</h3>
+          <p>${item.summary}</p>
+          <button class="expand-btn">
+            <span class="expand-text">Show More</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="date">${new Date(item.date).toLocaleDateString()}</div>
+        `;
+        
+        // Expand/collapse functionality
+        const expandBtn = historyItem.querySelector('.expand-btn');
+        const expandText = expandBtn.querySelector('.expand-text');
+        
+        expandBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isExpanded = historyItem.classList.toggle('expanded');
+          expandText.textContent = isExpanded ? 'Show Less' : 'Show More';
+        });
+
+        // Delete button handler
+        const deleteBtn = historyItem.querySelector('.delete-btn');
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          showDeleteConfirmation(historyItem, index);
+        });
+        
+        historyList.appendChild(historyItem);
+      });
+    } catch (error) {
+      console.error('Failed to load history:', error);
+      showToast('Failed to load history', 'error');
+    }
+  }
+
+  // Save summary to history when generated
+  async function saveSummary(videoId, summary) {
+    try {
+      const { summaries } = await chrome.storage.local.get('summaries');
+      const currentSummaries = summaries || [];
+      
+      // Find if there's an existing summary for this video
+      const existingIndex = currentSummaries.findIndex(s => s.videoId === videoId);
+      
+      // Create new summary object with current timestamp
+      const newSummary = {
+        videoId,
+        summary,
+        timestamp: Date.now()
+      };
+
+      let updatedSummaries;
+      if (existingIndex !== -1) {
+        // Replace the old summary with the new one at the same position
+        updatedSummaries = [...currentSummaries];
+        updatedSummaries[existingIndex] = newSummary;
+      } else {
+        // Add new summary to the beginning
+        updatedSummaries = [newSummary, ...currentSummaries];
+        // Keep only the most recent 50 summaries
+        if (updatedSummaries.length > 50) {
+          updatedSummaries = updatedSummaries.slice(0, 50);
+        }
+      }
+
+      await chrome.storage.local.set({ summaries: updatedSummaries });
+      await displayHistory();
+    } catch (error) {
+      console.error('Error saving summary:', error);
+    }
+  }
 });

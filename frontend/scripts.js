@@ -515,11 +515,29 @@ function pauseYouTubeVideo() {
     );
   }
 }
+async function displayCurrentVideoSummary(videoId) {
+  const summaryBox = document.getElementById('summary-box');
+  try {
+    const { summaries } = await chrome.storage.local.get('summaries');
+    if (summaries && summaries.length) {
+      const existing = summaries.find(s => s.videoId === videoId);
+      if (existing && existing.summary) {
+        summaryBox.textContent = existing.summary;
+        return;
+      }
+    }
+    summaryBox.textContent = "Summary will appear here...";
+  } catch (e) {
+    summaryBox.textContent = "Summary will appear here...";
+  }
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
   const summarizeBtn = document.getElementById('summarize-btn');
   const copyBtn = document.getElementById('copy-btn');
   const summaryBox = document.getElementById('summary-box');
+  summaryBox.textContent = "Summary will appear here...";
+
 
   // Disable summarize button initially
   summarizeBtn.disabled = true;
@@ -537,6 +555,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       target: { tabId: videoInfo.tabId },
       func: pauseYouTubeVideo
     });
+    // Display summary for current video if exists
+    await displayCurrentVideoSummary(videoInfo.videoId);
+  } else {
+    // If not a valid video, clear summary box
+    document.getElementById('summary-box').textContent = "Summary will appear here...";
   }
 
   summarizeBtn.addEventListener('click', async () => {
@@ -714,6 +737,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Add refresh button functionality (detect video changes)
   const refreshVideoInfo = async () => {
     const newVideoInfo = await getCurrentYouTubeVideo();
+    summaryBox.textContent = "Summary will appear here..."; // Always reset to default first
+
     
     // Check if video changed
     if (newVideoInfo.success && window.currentVideoInfo.success && 
@@ -721,13 +746,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Video changed, update info
       window.currentVideoInfo = newVideoInfo;
       updateVideoInfo(newVideoInfo);
-      summaryBox.textContent = "Summary will appear here...";
       showToast("New video detected!", "info");
     } else if (newVideoInfo.success !== window.currentVideoInfo.success) {
       // Status changed (error to success or vice versa)
       window.currentVideoInfo = newVideoInfo;
       updateVideoInfo(newVideoInfo);
     }
+    await displayCurrentVideoSummary(newVideoInfo.videoId);
   };
 
   // Refresh video info when extension popup is focused (optional)

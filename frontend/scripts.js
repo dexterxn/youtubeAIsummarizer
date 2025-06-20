@@ -905,10 +905,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Find if there's an existing summary for this video
       const existingIndex = currentSummaries.findIndex(s => s.videoId === videoId);
       
-      // Create new summary object with current timestamp
+      // Create new summary object with current timestamp and title
       const newSummary = {
         videoId,
         summary,
+        title: window.currentVideoInfo.title,
+        date: new Date().toISOString(),
         timestamp: Date.now()
       };
 
